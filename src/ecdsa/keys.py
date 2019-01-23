@@ -83,7 +83,7 @@ class VerifyingKey:
     def from_public_key_recovery(klass, signature, data, curve, hashfunc=sha1, sigdecode=sigdecode_string):
         # Given a signature and corresponding message this function
         # returns a list of verifying keys for this signature and message
-        
+
         digest = hashfunc(data).digest()
         return klass.from_public_key_recovery_with_digest(signature, digest, curve, hashfunc=sha1, sigdecode=sigdecode_string)
 
@@ -91,7 +91,7 @@ class VerifyingKey:
     def from_public_key_recovery_with_digest(klass, signature, digest, curve, hashfunc=sha1, sigdecode=sigdecode_string):
         # Given a signature and corresponding digest this function
         # returns a list of verifying keys for this signature and message
-        
+
         generator = curve.generator
         r, s = sigdecode(signature, generator.order())
         sig = ecdsa.Signature(r, s)
@@ -103,14 +103,19 @@ class VerifyingKey:
         verifying_keys = [klass.from_public_point(pk.point, curve, hashfunc) for pk in pks]
         return verifying_keys
 
-    def to_string(self):
+    def to_string(self, compressed=False, raw=True):
+        # Return the raw, SEC compressed (02/03), or uncompressed (04) public key as a byte string
         # VerifyingKey.from_string(vk.to_string()) == vk as long as the
         # curves are the same: the curve itself is not included in the
         # serialized form
         order = self.pubkey.order
         x_str = number_to_string(self.pubkey.point.x(), order)
-        y_str = number_to_string(self.pubkey.point.y(), order)
-        return x_str + y_str
+        y = self.pubkey.point.y()
+        if compressed:
+            return b('\x03') + x_str if y & 1 else b('\x02') + x_str
+
+        y_str = number_to_string(y, order)
+        return x_str + y_str if raw else b('\x04') + x_str + y_str
 
     def to_pem(self):
         return der.topem(self.to_der(), "PUBLIC KEY")

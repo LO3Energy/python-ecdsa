@@ -55,6 +55,20 @@ class ECDSA(unittest.TestCase):
         pub2 = VerifyingKey.from_string(pub.to_string())
         self.assertTrue(pub2.verify(sig, data))
 
+    def test_sec(self):
+        for i in range(20):
+            skey = SigningKey.generate(curve=SECP256k1, hashfunc=sha256)
+            pkey = skey.get_verifying_key()
+            pkey_bytes_compressed = pkey.to_string(compressed=True)
+            self.assertTrue(pkey_bytes_compressed.startswith(b'\x02') or pkey_bytes_compressed.startswith(b'\x03'))
+            self.assertEqual(66, len(pkey_bytes_compressed.hex()))
+            pkey_bytes_uncompressed = pkey.to_string(compressed=False, raw=False)
+            self.assertEqual(130, len(pkey_bytes_uncompressed.hex()))
+            self.assertTrue(pkey_bytes_uncompressed.startswith(b'\x04'))
+            pkey_bytes_uncompressed_raw = pkey.to_string(compressed=False, raw=True)
+            self.assertEqual(128, len(pkey_bytes_uncompressed_raw.hex()))
+
+
     def test_deterministic(self):
         data = b("blahblah")
         secexp = int("9d0219792467d7d37b4d43298a7d0c05", 16)
@@ -337,7 +351,7 @@ class ECDSA(unittest.TestCase):
         # Test if original vk is the list of recovered keys
         self.assertTrue(
             vk.pubkey.point in [recovered_vk.pubkey.point for recovered_vk in recovered_vks])
-        
+
 
 class OpenSSL(unittest.TestCase):
     # test interoperability with OpenSSL tools. Note that openssl's ECDSA

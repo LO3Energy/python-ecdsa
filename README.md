@@ -1,4 +1,6 @@
 # Pure-Python ECDSA
+_(Note: Modified `VerifyingKey.to_string() to output SEC compressed and uncompressed public keys. 
+Function to create a verifying key from a SEC compressed and uncompressed key not implemented at this time.)_
 
 [![build status](https://travis-ci.org/warner/python-ecdsa.png)](http://travis-ci.org/warner/python-ecdsa)
 [![Coverage Status](https://coveralls.io/repos/warner/python-ecdsa/badge.svg)](https://coveralls.io/r/warner/python-ecdsa)
