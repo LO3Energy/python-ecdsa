@@ -14,14 +14,14 @@ readme_path = os.path.join(directory, "README.md")
 with io.open(readme_path, encoding="utf-8") as read_file:
     long_description = read_file.read()
 
-setup(name="ecdsa",
+setup(name="ecdsa-lo3",
       version=versioneer.get_version(),
-      description="ECDSA cryptographic signature library (pure python)",
+      description="ECDSA cryptographic signature library (pure python) (LO3 modified)",
       long_description=long_description,
       long_description_content_type='text/markdown',
       author="Brian Warner",
       author_email="warner@lothar.com",
-      url="http://github.com/warner/python-ecdsa",
+      url="http://github.com/LO3Energy/python-ecdsa",
       packages=["ecdsa"],
       package_dir={"": "src"},
       license="MIT",
